@@ -1,0 +1,17 @@
+server:
+  port: "8080"       # Порт, на котором будет запускаться сервер
+
+database:
+  host: "postgres"   # Адрес базы данных, оставьте "postgres" для работы docker
+  port: 5432          # Порт базы данных, оставьте "postgres" для работы docker
+  user: "insert_field"    # Имя пользователя базы данных #ВПИСЫВАЕМ СЮДА НАЗВАНИЕ сервиса БД от докера
+  password: "insert_field"  # Пароль пользователя базы данных, заменить "insert_field" на свой пароль
+  dbname: "key_generator"    # Имя базы данных
+  sslmode: "disable"
+  
+
+#может быть и не нужно это
+logger:
+  output: "stdout"  # Куда выводить логи: stdout или же file
+  filepath: ""      # Путь где будут храниться логи, если выбран output "file"
+  level: "debug"     # Уровни логирования: "debug", "info", "warn", "error"

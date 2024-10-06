@@ -1,0 +1,47 @@
+
+# это подгруппа, у нас 2 сервиса: generator(сам наш проект) и postgres(база данных на докере)
+services:
+  #сервис generator это и есть наша api
+  generator:
+    #указываем название изображения
+    image: generator:local
+    #название контейнера
+    container_name: gen-app
+    #указываем от чего должен зависеть запуск generator(наше api в докере)
+    #тут прописан код health_check(это значит что мы не просто запускаем api после запуска контейнера postgres)
+    #а также ждем когда сама БД подключиться к контейнеру postgres, только после этого наша api будет запускаться
+    depends_on:
+      postgres:
+        condition: service_healthy
+    #указываем порт который будет на сервере api(8080 без двоеточия что значит полный)
+    #второй порт это порт в докере
+    ports:
+      - "8080:8080"
+      
+  # наш второй сервис, а именно подключение базы данных в докер
+  postgres:
+    #название изображения, а также это драйвер БД
+    image: postgres:latest
+    #название контейнера
+    container_name: gen-postgres
+    #Тот самый код, который будет проверять готовность БД внутри контейнера
+    healthcheck:
+      #выдаст pg_isready после инициализации БД
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      #проверка раз в 5 секунд
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    #к сожалению докер не смотрит наш конфиг и придется вписывать данные БД сюда 
+    environment: #
+    #ОСТАВЬТЕ КАК ЕСТЬ
+      - POSTGRES_DB=key_generator
+    #ВСТАВЬТЕ СВОИ ДАННЫЕ вместо insert_field
+      - POSTGRES_USER=insert_field
+      - POSTGRES_PASSWORD=insert_field
+    #Все данные Базы Данных PostgreSQL теперь будут располагаться внутри нашего микросервиса по пути ./data
+    volumes: #
+      - ./data:/var/lib/postgresql/data
+
+
+
